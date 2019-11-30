@@ -62,4 +62,5 @@ Thank you FigureEight for providing the data set for this project.
 ### Visualizations
 
 ![image](https://user-images.githubusercontent.com/55913278/69903961-6eb48c80-13c6-11ea-9e5f-2f8f0d860e9c.png)
+![image](https://user-images.githubusercontent.com/55913278/69903996-f0a4b580-13c6-11ea-9162-ef95f53ae5a1.png)
 
