@@ -59,4 +59,8 @@ Thank you FigureEight for providing the data set for this project.
 
 3. Go to https://view6914b2f4-3001.udacity-student-workspaces.com/
 
+### Visualizations
+
+![image](https://user-images.githubusercontent.com/55913278/69903961-6eb48c80-13c6-11ea-9e5f-2f8f0d860e9c.png)
+![image](https://user-images.githubusercontent.com/55913278/69903996-f0a4b580-13c6-11ea-9162-ef95f53ae5a1.png)
 
