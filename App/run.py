@@ -7,7 +7,8 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+import plotly.graph_objs as go
+from plotly.graph_objs import Bar, Heatmap, Scatter
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
@@ -49,6 +50,13 @@ def index():
     nlarge_counts = cats_counts.nlargest(5)
     nlarge_names = list(nlarge_counts.index)
     
+    # Data for additional visuals
+    category_sums = df.iloc[:, 4:].sum().sort_values(ascending=False)[1:11]
+    category_names = list(category_sums.index)
+    
+    category_corr = df.iloc[:, 4:].corr().values
+    category_names_corr = list(df.iloc[:,4:].columns)
+    
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -69,7 +77,41 @@ def index():
                     'title': "Genre"
                 }
             }
-        }
+        },
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_sums,
+                    text=category_sums,
+                    textposition='auto',
+                    
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Top 10 categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                },
+            }
+        },
+        {
+            'data': [
+                Heatmap(
+                    x=category_names_corr,
+                    y=category_names_corr[::-1],
+                    z=category_corr
+                )    
+            ],
+
+            'layout': {
+                'title': 'Correlation Heatmap',
+                'xaxis': {'tickangle': -60}
+            }
+        },
     ]
     
     # encode plotly graphs in JSON
