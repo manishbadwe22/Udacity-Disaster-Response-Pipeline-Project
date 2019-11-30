@@ -59,4 +59,5 @@ Thank you FigureEight for providing the data set for this project.
 
 3. Go to https://view6914b2f4-3001.udacity-student-workspaces.com/
 
+[Visualizations](blob/master/Screenshots/Category%20Plot.png)
 
