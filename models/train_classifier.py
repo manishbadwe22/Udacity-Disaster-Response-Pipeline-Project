@@ -46,67 +46,41 @@ def load_data(database_filepath):
     
     return X, Y, category_names
 
-    def custom_tokenize (text):
-        """ Functions to process the text data
-                Tokenize 
-                Remove special characters
-                Lemmatize
-                Remove Stopwords
-            Returns:
-                Preprocessed text 
-        """    
+def tokenize (text):
+    '''
+    INPUT 
+        text: Text to be processed   
+    OUTPUT
+        Returns a processed text variable that was tokenized, lower cased, stripped, and lemmatized
+    '''
+    tokens = word_tokenize(text)
+    lemmatizer = WordNetLemmatizer()
+    clean_tokens = []
+    for tok in tokens:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
 
-        default_stopwords = set(stopwords.words('english'))
-        default_lemmatizer = WordNetLemmatizer()
-        # Search for all non-letters and replace with spaces
-        text = re.sub("[^a-zA-Z]"," ", str(text))    
-
-        def tokenize(text):
-            return [w for s in sent_tokenize(text) for w in word_tokenize(s)]
-
-        def remove_special_characters(text, characters=string.punctuation.replace('-', '')):
-            tokens = tokenize_text(text)
-            pattern = re.compile('[{}]'.format(re.escape(characters)))
-            return ' '.join(filter(None, [pattern.sub('', t) for t in tokens]))
-
-        def lemmatize(text, lemmatizer=default_lemmatizer):
-            tokens = tokenize_text(text)
-            return ' '.join([lemmatizer.lemmatize(t) for t in tokens])
-
-        def remove_stopwords(text, stop_words=default_stopwords):
-            tokens = [w for w in tokenize_text(text) if w not in stop_words]
-            return ' '.join(tokens)
-
-        text = text.strip(' ') # whitespaces removal
-        text = text.lower() # lowercase conversion
-        text = remove_special_characters(text)
-        text = lemmatize(text)
-        text = remove_stopwords(text)
-        text = tokenize(text)
-
-        print(text)
-        return text
-
+    return clean_tokens
 
 def build_model():
-    '''INPUT 
+    '''
+    INPUT 
         X_Train: Training features for use by GridSearchCV
         y_train: Training labels for use by GridSearchCV
     OUTPUT
         Returns a pipeline model that has gone through tokenization, count vectorization, 
         TFIDTransofmration and created into a ML model
     '''
-    rfc = MultiOutputClassifier(RandomForestClassifier())
-
     pipeline = Pipeline([
-        ('vect', CountVectorizer()),
+        ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', rfc)
-        ])
-
-    parameters = {'clf__estimator__max_depth': [20, 40, None],
-              'clf__estimator__min_samples_leaf':[2, 10, 20]}
-
+        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+    ])
+    
+    parameters = {  
+        'clf__estimator__min_samples_split': [2, 4],
+        
+    }
     grid_search = GridSearchCV(pipeline, parameters)
     return grid_search
 
@@ -141,7 +115,6 @@ def save_model(model, model_filepath):
     """
     #joblib.dump(model, model_filepath)
     pickle.dump(model, open(model_filepath, 'wb'))
-
 
 def main():
     if len(sys.argv) == 3:
